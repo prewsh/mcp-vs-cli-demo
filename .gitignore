@@ -1,7 +1,15 @@
-.venv/
 __pycache__/
 *.pyc
-node_modules/
 .DS_Store
 .env
 .env.*
+auth.json
+config.toml
+.codex/
+home-*/
+private/
+raw/
+*.jsonl
+*.log
+*.zip
+*.sqlite*

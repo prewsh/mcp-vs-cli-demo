@@ -1,4 +1,0 @@
-{"time":"2026-10-31T05:38:38.974Z","method":"GET","path":"/projects","query":"","interface":"mcp","outcome":"ok"}
-{"time":"2026-10-31T05:38:40.666Z","method":"POST","path":"/projects/local-demo-project/deploy","query":"","interface":"mcp","outcome":"ok","deployment_id":"deployment-1"}
-{"time":"2026-10-31T05:38:42.846Z","method":"GET","path":"/deployments/deployment-1/logs","query":"?tail=100","interface":"mcp","outcome":"ok","deployment_id":"deployment-1"}
-{"time":"2026-10-31T05:38:42.878Z","method":"GET","path":"/deployments/deployment-1","query":"","interface":"mcp","outcome":"ok","deployment_id":"deployment-1","status":"succeeded"}

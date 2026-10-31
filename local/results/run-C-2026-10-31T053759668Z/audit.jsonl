@@ -1,4 +1,0 @@
-{"time":"2026-10-31T05:38:06.220Z","method":"GET","path":"/projects","query":"","interface":"cli","outcome":"ok"}
-{"time":"2026-10-31T05:38:08.033Z","method":"POST","path":"/projects/local-demo-project/deploy","query":"","interface":"cli","outcome":"ok","deployment_id":"deployment-1"}
-{"time":"2026-10-31T05:38:09.720Z","method":"GET","path":"/deployments/deployment-1","query":"","interface":"cli","outcome":"ok","deployment_id":"deployment-1","status":"succeeded"}
-{"time":"2026-10-31T05:38:11.546Z","method":"GET","path":"/deployments/deployment-1/logs","query":"?tail=100","interface":"cli","outcome":"ok","deployment_id":"deployment-1"}

@@ -1,90 +1,108 @@
-# If agents can use CLIs, what does MCP add?
+# CLI vs MCP: a real PipeOps agent experiment
 
-A local experiment comparing the same Codex agent using a CLI, an MCP server,
-and a CLI with `AGENTS.md`. Both adapters control the same local deployment
-service. The service launches a real Flask/Gunicorn process and exposes its
-status and runtime logs.
+I ran the same Codex model through the PipeOps CLI and the PipeOps MCP server to see how it discovered operations, answered deployment questions and attempted a small configuration change. This repository contains the public, redacted results from those runs on 31 October 2026.
 
-**No PipeOps account, hosted project, cloud server or deployment is required.**
-The app and tools run locally. Codex still connects to OpenAI for model inference.
+The contents on `main` replace the earlier local simulation. That simulation is not evidence for the results below.
 
-Read the [article](ARTICLE.md) and [captured comparison](local/results/RESULTS.md).
-All three reported runs completed the task with four deployment-service requests
-each. The earlier calibration series is retained under `local/pilot-results/`.
+The production project is anonymized throughout this export. Credentials, account and project identifiers, private URLs, raw traces and Codex login files are excluded. You can inspect the evidence and reproduce the analysis without a PipeOps account.
 
-## Reproduce
+## What I tested
 
-Prerequisites: macOS or Linux, Python 3 with `venv`, Node.js 22+, npm, and an
-authenticated Codex CLI. The captured case study uses Codex
-`0.166.0-alpha.5.1`, model `gpt-6.1-sol`, and high reasoning effort. Use a model
-available to your account and keep it fixed across your own series.
+| Stage | Request | Interfaces and conditions |
+|---|---|---|
+| Step 1 | Find the latest deployment, inspect recent logs, explain the last three deployments | CLI and MCP in separate fresh sessions, continuing within each three-task arm; the same prompts and a read-only service token |
+| Step 1R | Repeat the three read tasks after naming the CLI in Task 1 | Fresh CLI session; only the availability sentence in the first prompt changed |
+| Step 2 | Project-description change | Skipped because the saved MCP inventory says description updates are unsupported |
+| Step 3a | Merge `AGENT_EXPERIMENT_A=1` without reading other variables or issuing a deploy command | Fresh CLI session using the machine's normal login, with no service token passed |
+| Step 3a-R | Repeat 3a after naming the CLI | Fresh CLI session; only the availability sentence changed |
+| Step 3b | Merge `AGENT_EXPERIMENT_B=1` | Fresh MCP session with the user-confirmed read-only token |
+| Step 3c | The same B request | Fresh MCP session with the user-confirmed write-enabled token |
+
+Every subject used **`gpt-6.1-sol`, high reasoning, Codex `0.166.0-alpha.5.1`, and the `workspace-write` sandbox with command network access**. The PipeOps CLI version was `0.2.104`. The baseline inventory listed **144 MCP tools**. [METHOD.md](METHOD.md) records the prompts, authentication differences and operator rules.
+
+## What happened
+
+### Naming the CLI changed whether the agent used it
+
+The original prompt said, “PipeOps tools are available in this session.” In the original CLI arm, the agent looked for a connector and never invoked `pipeops`. It did not verify any of the three requested operational answers.
+
+For Step 1R, I changed that sentence to:
+
+> The PipeOps CLI (`pipeops`) is installed and logged in on this machine.
+
+The agent then used CLI help, found the project, and answered both deployment questions. Its log queries returned empty or placeholder data, so it could not establish error and warning counts. I kept the original run and labelled the rerun separately because the prompt had changed.
+
+| Read task | Original CLI | Clarified CLI rerun | MCP |
+|---|---|---|---|
+| Latest deployment | Unverified; no CLI invocation | Verified against the recorded baseline | Verified against the recorded baseline |
+| Recent runtime logs | No log read | Counts unavailable from returned CLI data | Seven INFO entries; zero ERROR/WARNING entries; all seven were HTTP 401 access records |
+| Last three deployments | Unverified; no history read | Three successful deployments and webhook triggers verified | Three successful deployments and webhook triggers verified |
+
+The MCP log task needed one retry after a startup timeout. Its HTTP 401 **application log entries** are separate from the **environment-update authorization errors** in Step 3. Also, the CLI and MCP log observations occurred at different times and used different queries, so this was not a simultaneous comparison of identical log data.
+
+### The CLI update succeeded and automatically redeployed the app
+
+Original 3a also stopped before using the CLI. In clarified 3a-R, the agent found the project and ran a one-key merge using the machine's normal CLI login. The command returned:
+
+```text
+[OK] Project environment variables merged
+```
+
+The agent issued no deployment command, but History showed a new **Env Changed** deployment that finished **RUNNING in 22 seconds**. Its final claim, “No deployment was triggered,” did not describe that automatic redeployment correctly.
+
+The deployment listing stayed unchanged while deployment history gained the new record. I therefore checked both surfaces rather than treating a successful command or an unchanged listing as complete verification.
+
+### Both MCP update runs received the same server error
+
+I configured both clean MCP homes to allow `update_project_env_variables`. Codex allowed the calls. The tool returned an upstream PipeOps API response containing:
+
+```text
+401 invalid or unauthorized service account token
+```
+
+| Run | Update calls | Result | New deployment |
+|---|---:|---|---|
+| Original CLI 3a | 0 | Agent declined before a CLI request | None |
+| Clarified CLI 3a-R | 1 | Merge succeeded using normal CLI login | One Env Changed deployment |
+| MCP 3b, read-only token | 1 | Upstream HTTP 401 | None |
+| MCP 3c, write-enabled token | 2 | Same upstream HTTP 401 on both subject attempts | None |
+
+These were PipeOps tool responses, not Codex approval blocks. But the generic error does **not** establish that missing write scope caused the refusal. Both token roles failed, and both MCP agents sent the project slug while the successful CLI command used the project UUID. I did not resolve those differences with another write test.
+
+### The saved tool description did not warn about redeployment
+
+The exact entry for `update_project_env_variables` in the saved baseline inventory reads:
+
+> Update project environment variables; merges by default or replaces all when requested.
+
+That sentence and the observed CLI success output do not mention redeployment. The inventory itself says its descriptions were **condensed from metadata**. This is evidence about that saved wording, not a claim that the complete live MCP schema, every tool response or the PipeOps documentation lacks a warning. See the [saved inventory](evidence/mcp-tools.md).
+
+## What the results mean
+
+The experiment shows how interface discovery, available operations, client approvals, credentials and server responses affected these particular runs. The agent needed a clearer CLI availability cue. CLI discovery continued in later tasks. MCP supplied an advertised tool menu, and its environment-update calls passed Codex's approval layer before receiving API errors. The successful CLI change had a production consequence that the agent's final answer missed.
+
+The results do not identify a universal winner. They do not isolate a token-scope effect, prove that service tokens can never update variables, or measure the token cost of MCP schemas alone. The arms differ in prompt wording, continuing context, authentication in Step 3, returned data, retries and request identifiers. One trial per condition provides observations, not a statistical benchmark.
+
+## Inspect the evidence
+
+- [RESULTS.md](RESULTS.md): detailed counts, token usage, elapsed time, failures and refusal attribution.
+- [METHOD.md](METHOD.md): prompts, controls, changed conditions and guidance for an independent run.
+- [data/runs.json](data/runs.json): 13 curated run records, action metadata and redacted final answers.
+- [data/metrics.csv](data/metrics.csv): the same numeric measurements in a spreadsheet-friendly format.
+- [Evidence index](evidence/README.md): redacted timelines, answers, inventory and startup failures.
+- [PRIVACY.md](PRIVACY.md): what was removed and the limits of the public evidence.
+
+The public timelines omit production read payloads, private host output and Python helper bodies. They preserve action order, statuses, measured counters and selected safe output. Original private JSONL traces and dashboard screenshots are not included.
+
+## Reproduce the analysis
+
+Clone this repository and run the offline scripts with Python 3.9 or later:
 
 ```bash
-./local/setup.sh
-npm test --prefix local
-
-export MODEL=gpt-6.1-sol
-export EFFORT=high
-node local/run.mjs A   # CLI only
-node local/run.mjs C   # CLI plus AGENTS.md
-node local/run.mjs B   # MCP only
+python3 scripts/summarize.py
+python3 scripts/check_publication.py
 ```
 
-If Codex is not on PATH, set `CODEX_BIN` to its absolute executable path first.
-The runner copies the file login from `~/.codex/auth.json` into private runtime
-folders outside the repository. Set `CODEX_AUTH_SOURCE` if yours is elsewhere.
-For keychain-only authentication, log in to a dedicated file-auth Codex home and
-point `CODEX_AUTH_SOURCE` to its `auth.json`. Never commit credentials.
+The first command validates the exported counters and prints the measurements. The second checks file checksums, local Markdown links and common credential patterns. Neither script contacts PipeOps or performs cloud operations.
 
-Read [the protocol](local/PROTOCOL.md) before changing settings or collecting new
-runs. The first invocation freezes model, effort, versions and source hashes in
-`~/mcp-vs-cli-local-exp-v2/controls.json`. Each run has fresh context and a fresh
-backend. Use a new `LAB_ROOT` directory for a new series. Run conditions one at
-a time and do not coach the agent. Results are saved under `local/results/`.
-
-## What the agent does
-
-The identical [prompt](local/prompt.txt) asks it to find `mcp-cli-demo`, deploy it,
-check whether it succeeded, inspect runtime logs and report errors. The app logs
-a missing `DEMO_GREETING` variable at startup and uses a fallback greeting. Its
-`/health` endpoint remains healthy. The agent must distinguish an application
-error log from deployment failure.
-
-```mermaid
-flowchart LR
-    Agent[Codex] --> CLI[democtl through shell]
-    Agent --> MCP[Local MCP server through stdio]
-    CLI --> Backend[Shared localhost deployment service]
-    MCP --> Backend
-    Backend --> App[Flask app in a Gunicorn worker]
-```
-
-Both adapters expose four matching operations and return JSON. The CLI also
-accepts `--json`; JSON is already its default. Run C receives the exact
-[CLI reference](local/AGENTS.cli.md), prepared before collecting A. Run B receives
-four MCP tool definitions with argument schemas. Its CLI is absent from PATH.
-This controls interface availability and normal context loading, not arbitrary
-host reads. The protocol requires checking traces for deviations.
-
-## Files
-
-| Path | Purpose |
-|---|---|
-| `app.py`, `requirements.txt`, `Dockerfile` | Demo app and optional container definition |
-| `local/backend.mjs` | Shared deployment service; starts real app processes |
-| `local/cli.mjs` | CLI adapter and its help |
-| `local/server.mjs` | MCP adapter using the official SDK |
-| `local/client.mjs` | Shared HTTP request function |
-| `local/run.mjs` | Fresh context, fixed controls, traces and process cleanup |
-| `local/test.mjs` | Integration checks through both adapters |
-| `local/count_actions.py` | Trace extraction with incomplete/error handling |
-| `local/results/` | Captured model traces, audits, reports and measurements |
-| `ARTICLE.md` | Article based on the captured runs |
-
-One shell execution can contain several commands and requests. Compare the
-backend audit as well as visible Codex actions. Input-token totals include cached
-input; do not add cached tokens to them. A lack of visible MCP discovery commands
-does not establish zero schema/context cost.
-
-This is an authored, four-operation lab with one trial per condition. It does not
-measure production PipeOps behavior or establish a general performance ranking.
+To run a new live experiment, use your own disposable project, credentials and current tools, following [METHOD.md](METHOD.md). These observations describe the versions and date above; a new run may behave differently.

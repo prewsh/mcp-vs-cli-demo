@@ -1,6 +1,0 @@
-[2026-10-31 06:37:44 +0100] [8922] [INFO] Starting gunicorn 23.0.0
-[2026-10-31 06:37:44 +0100] [8922] [INFO] Listening at: http://127.0.0.1:58309 (8922)
-[2026-10-31 06:37:44 +0100] [8922] [INFO] Using worker: sync
-[2026-10-31 06:37:44 +0100] [8923] [INFO] Booting worker with pid: 8923
-2026-10-31 06:37:44,299 ERROR mcp-cli-demo: DEMO_GREETING environment variable is not set; falling back to default greeting. Set DEMO_GREETING in the project environment.
-2026-10-31 06:37:44,299 INFO mcp-cli-demo: mcp-cli-demo starting up
