@@ -1,0 +1,26 @@
+
+> mcp-vs-cli-local-lab@1.0.0 test
+> node --test test.mjs
+
+TAP version 13
+# Subtest: cli: real process deployment, status, bounded logs, failures
+ok 1 - cli: real process deployment, status, bounded logs, failures
+  ---
+  duration_ms: 1516.116292
+  type: 'test'
+  ...
+# Subtest: mcp: real process deployment, status, bounded logs, failures
+ok 2 - mcp: real process deployment, status, bounded logs, failures
+  ---
+  duration_ms: 470.993208
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2138.439

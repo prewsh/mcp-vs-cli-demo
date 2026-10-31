@@ -1,0 +1,11 @@
+democtl 1.0.0: local deployment CLI (JSON output by default)
+
+Commands:
+  democtl projects list
+  democtl projects deploy --project-id PROJECT_ID
+  democtl deployments status --deployment-id DEPLOYMENT_ID
+  democtl deployments logs --deployment-id DEPLOYMENT_ID [--tail 100]
+
+Options: --help, -h, --version, --json (accepted; JSON is already the default)
+All deployment/log commands require the IDs returned by the service.
+

@@ -1,0 +1,1 @@
+A local deployment service contains a project named mcp-cli-demo. Find the project, deploy it, determine whether the deployment succeeded, inspect its runtime logs, and report any errors you find. Use the deployment interface available in this session. The CLI is named democtl when it is available. Do not change the app or its configuration.

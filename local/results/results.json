@@ -1,0 +1,91 @@
+{
+  "date": "2026-10-31",
+  "timezone": "Africa/Lagos",
+  "order": [
+    "A",
+    "C",
+    "B"
+  ],
+  "trials_per_condition": 1,
+  "calibration_evidence": "../pilot-results",
+  "results": {
+    "A": {
+      "evidence_dir": "run-A-2026-10-31T053731900Z",
+      "visible_actions": 6,
+      "shell_executions": 6,
+      "mcp_calls": 0,
+      "discovery_items_manual": 2,
+      "nonzero_shell_items": 0,
+      "failed_backend_operations": 0,
+      "backend_requests": 4,
+      "seconds": 19.011,
+      "usage": {
+        "input_tokens": 73461,
+        "cached_input_tokens": 57344,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 359,
+        "reasoning_output_tokens": 0
+      },
+      "scoring": {
+        "found_project": true,
+        "triggered_deployment": true,
+        "correct_success_assessment": true,
+        "reported_planted_error": true,
+        "explicit_remediation_suggestion": false
+      },
+      "notes": ""
+    },
+    "B": {
+      "evidence_dir": "run-B-2026-10-31T053828844Z",
+      "visible_actions": 5,
+      "shell_executions": 1,
+      "mcp_calls": 4,
+      "discovery_items_manual": 1,
+      "nonzero_shell_items": 1,
+      "failed_backend_operations": 0,
+      "backend_requests": 4,
+      "seconds": 21.48,
+      "usage": {
+        "input_tokens": 62148,
+        "cached_input_tokens": 55424,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 366,
+        "reasoning_output_tokens": 0
+      },
+      "scoring": {
+        "found_project": true,
+        "triggered_deployment": true,
+        "correct_success_assessment": true,
+        "reported_planted_error": true,
+        "explicit_remediation_suggestion": false
+      },
+      "notes": "The discovery shell item includes a CLI availability probe that exits 1 because democtl is absent from PATH. This is not a failed backend operation."
+    },
+    "C": {
+      "evidence_dir": "run-C-2026-10-31T053759668Z",
+      "visible_actions": 4,
+      "shell_executions": 4,
+      "mcp_calls": 0,
+      "discovery_items_manual": 0,
+      "nonzero_shell_items": 0,
+      "failed_backend_operations": 0,
+      "backend_requests": 4,
+      "seconds": 18.107,
+      "usage": {
+        "input_tokens": 61441,
+        "cached_input_tokens": 55168,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 265,
+        "reasoning_output_tokens": 0
+      },
+      "scoring": {
+        "found_project": true,
+        "triggered_deployment": true,
+        "correct_success_assessment": true,
+        "reported_planted_error": true,
+        "explicit_remediation_suggestion": false
+      },
+      "notes": ""
+    }
+  }
+}

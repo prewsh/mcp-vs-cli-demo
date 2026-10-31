@@ -1,0 +1,32 @@
+{
+  "actions": [
+    {
+      "id": "item_1",
+      "kind": "command_execution",
+      "action": "command -v democtl",
+      "label": "F",
+      "result": "exit 1",
+      "failed": true,
+      "incomplete": false
+    },
+    {
+      "id": "item_2",
+      "kind": "mcp_tool_call",
+      "action": "local_lab.list_projects({})",
+      "label": "F",
+      "result": "failed",
+      "failed": true,
+      "incomplete": false
+    }
+  ],
+  "usage": {
+    "input_tokens": 36135,
+    "cached_input_tokens": 33280,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 273,
+    "reasoning_output_tokens": 87
+  },
+  "errors": [],
+  "warnings": [],
+  "completed_turns": 1
+}

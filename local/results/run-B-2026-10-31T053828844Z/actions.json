@@ -1,0 +1,59 @@
+{
+  "actions": [
+    {
+      "id": "item_1",
+      "kind": "command_execution",
+      "action": "pwd; rg --files -g 'AGENTS.md' -g '*democtl*' -g 'README*' -g 'package.json' -g '\"'!node_modules'\"' -g '\"'!vendor'\"' .; command -v democtl",
+      "label": "F",
+      "result": "exit 1",
+      "failed": true,
+      "incomplete": false
+    },
+    {
+      "id": "item_2",
+      "kind": "mcp_tool_call",
+      "action": "local_lab.list_projects({})",
+      "label": "T",
+      "result": "completed",
+      "failed": false,
+      "incomplete": false
+    },
+    {
+      "id": "item_3",
+      "kind": "mcp_tool_call",
+      "action": "local_lab.deploy_project({\"project_id\": \"local-demo-project\"})",
+      "label": "T",
+      "result": "completed",
+      "failed": false,
+      "incomplete": false
+    },
+    {
+      "id": "item_4",
+      "kind": "mcp_tool_call",
+      "action": "local_lab.get_runtime_logs({\"deployment_id\": \"deployment-1\", \"tail\": 100})",
+      "label": "T",
+      "result": "completed",
+      "failed": false,
+      "incomplete": false
+    },
+    {
+      "id": "item_5",
+      "kind": "mcp_tool_call",
+      "action": "local_lab.get_deployment({\"deployment_id\": \"deployment-1\"})",
+      "label": "T",
+      "result": "completed",
+      "failed": false,
+      "incomplete": false
+    }
+  ],
+  "usage": {
+    "input_tokens": 62148,
+    "cached_input_tokens": 55424,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 366,
+    "reasoning_output_tokens": 0
+  },
+  "errors": [],
+  "warnings": [],
+  "completed_turns": 1
+}
