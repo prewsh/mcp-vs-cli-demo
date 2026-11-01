@@ -2,6 +2,8 @@
 
 I ran the same Codex model through the PipeOps CLI and the PipeOps MCP server to see how it discovered operations, answered deployment questions and attempted a small configuration change. This repository contains the public, redacted results from those runs on 31 October 2026.
 
+Read the article: [ARTICLE.md](ARTICLE.md) (text mirror) or [on Prompt Africa](https://promptafrica.substack.com/p/if-ai-agents-can-already-use-clis).
+
 The contents on `main` replace the earlier local simulation. That simulation is not evidence for the results below.
 
 The production project is anonymized throughout this export. Credentials, account and project identifiers, private URLs, raw traces and Codex login files are excluded. You can inspect the evidence and reproduce the analysis without a PipeOps account.
